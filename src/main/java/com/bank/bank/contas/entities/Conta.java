@@ -12,11 +12,14 @@ public class Conta {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @Column(length = 50)
     private String titular;
 
     @ManyToOne()
+    @Column()
     private AgenciaBancaria agenciaBancaria;
 
+    @Column()
     private float saldo;
 
     public Conta(String titular){

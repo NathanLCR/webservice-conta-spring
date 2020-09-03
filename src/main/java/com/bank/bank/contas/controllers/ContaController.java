@@ -16,31 +16,54 @@ public class ContaController {
     @Autowired
     private ContaRepository contaRepository;
 
-    @GetMapping()
+    @GetMapping("")
     public Iterable<Conta> getAll(){
 
         return contaRepository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity getById(@PathVariable int id){
+
+        Optional<Conta> conta = contaRepository.findById(id);
+
+
+        if (conta.isEmpty()){
+            return new ResponseEntity<>("Conta não encontrada",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(conta,HttpStatus.FOUND);
+    }
+
     @PostMapping()
     public ResponseEntity create(@RequestBody Conta conta){
-        if (conta.getTitular() != null){
-            contaRepository.save(conta);
-        }else{
+
+        if (conta.getTitular() == null){
             return new ResponseEntity<>("Dados invalidos",HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        contaRepository.save(conta);
+
+        return new ResponseEntity<>("Conta criada com sucesso",HttpStatus.CREATED);
     }
 
-    @PutMapping()
-    public ResponseEntity update(@RequestBody Conta newConta){
-        Optional<Conta> conta = contaRepository.findById(newConta.getId());
+//    @PutMapping("/{id}")
+//    public ResponseEntity update(@RequestBody Conta newConta,@PathVariable int id){
+//
+//        if (contaRepository.existsById(id))
+//
+//        return new ResponseEntity<>(HttpStatus.CREATED);
+//    }
 
-        if(conta)
-    }
+    @DeleteMapping("${id}")
+    public ResponseEntity delete(@PathVariable int id){
 
-    @DeleteMapping()
-    public ResponseEntity delete(){
+        contaRepository.deleteById(id);
+
+        if (!contaRepository.existsById(id)){
+            return new ResponseEntity<>("Conta inexistente",HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>("Conta deletada com sucesso",HttpStatus.OK);
 
     }
 
